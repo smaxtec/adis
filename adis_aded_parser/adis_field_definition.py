@@ -17,6 +17,9 @@ class AdisFieldDefinition:
             raise Exception("""The number of decimal digits has to be a number between 0 and 9.
                 Got %d.""" % self.decimal_digits)
 
+    def get_item_number(self):
+        return self.item_number
+
     def get_field_size(self):
         return self.field_size
 
@@ -32,10 +35,11 @@ class AdisFieldDefinition:
         elif value_size == 0:
             value = None
 
-        if value is not None and \
-            (self.only_contains_char(value, "?") or     # null value field
-            self.only_contains_char(value, "|")):       # undefined DDI number
+        if value is not None and self.only_contains_char(value, "?"):   # null value field
             value = None
+
+        if value is not None and self.only_contains_char(value, "|"):   # undefined DDI number
+            return None         # no value will be created for this field
 
         # handle case where it's a decimal number
         if value is not None and self.decimal_digits != 0:
@@ -63,7 +67,9 @@ class AdisFieldDefinition:
         text += str(self.decimal_digits)    # only 1 char window
         return text
 
-    def dumps_value(self, value):
+    def dumps_value(self, value, undefined=False):
+        if undefined:
+            return self.field_size * "|"
         if value is None:
             return self.field_size * "?"
         elif type(value) is str:

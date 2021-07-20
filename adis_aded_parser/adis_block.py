@@ -63,13 +63,16 @@ class AdisBlock:
             result_dict["definitions"].append(definition.to_dict())
 
         for data_row in self.data_rows:
-            data_row_content_as_dict = {}
-            for value in data_row:
-                value_as_dict = value.to_dict()
-                data_row_content_as_dict[value_as_dict["item_number"]] = value_as_dict["value"]
-            result_dict["data"].append(data_row_content_as_dict)
+            result_dict["data"].append(self.data_row_to_dict(data_row))
 
         return result_dict
+
+    def data_row_to_dict(self, data_row):
+        data_row_dict = {}
+        for value in data_row:
+            value_as_dict = value.to_dict()
+            data_row_dict[value_as_dict["item_number"]] = value_as_dict["value"]
+        return data_row_dict
 
     def dumps_definitions(self):
         text = "D" + self.status + self.entity_number
@@ -82,11 +85,16 @@ class AdisBlock:
         text = ""
         for data_row in self.data_rows:
             text += "V" + self.status + self.entity_number
-            for data_index in range(len(data_row)):
-                definition = self.field_definitions[data_index]
-                data = data_row[data_index]
-                # dumps value using definition
-                text += definition.dumps_value(data.value)
+            data_row_dict = self.data_row_to_dict(data_row)
+            for definition in self.field_definitions:
+                item_number = definition.get_item_number()
+                if item_number not in data_row_dict:
+                    # the value of this field is undefined
+                    text += definition.dumps_value(None, undefined=True)
+                else:
+                    value = data_row_dict[item_number]
+                    text += definition.dumps_value(value)
+            
             text += "\r\n"
         return text
 

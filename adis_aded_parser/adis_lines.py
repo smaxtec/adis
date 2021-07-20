@@ -123,7 +123,9 @@ class ValueLine(AdisLine):
         current_position = 0
         for field_definition in field_definitions:
             field_size = field_definition.get_field_size()
-            values.append(field_definition.parse_field_at_position(self.raw_items, current_position))
+            value = field_definition.parse_field_at_position(self.raw_items, current_position)
+            if value is not None:
+                values.append(value)
             current_position += field_size
 
         return values
