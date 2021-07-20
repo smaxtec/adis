@@ -8,10 +8,11 @@ from .adis_lines import (
 
 def split_lines(raw_input_text):
     # lines have to end with "\r\n" but we also accept lines that only end with "\n"
-    lines = raw_input_text.split("\n")
-    for line in lines:
-        line = line.replace("\r", "")
+    lines = []
+    for raw_line in raw_input_text.split("\n"):
+        lines.append(raw_line.replace("\r", ""))    # remove \r
     return lines
+
 
 class Adis:
     def __init__(self, adis_files):
@@ -53,9 +54,18 @@ class Adis:
         return json.dumps(self.get_list())
 
     @staticmethod
-    def from_json(json):
-        # TODO: implement
-        pass
+    def from_json(json_text):
+        data = json.loads(json_text)
+        if type(data) is not list:
+            raise Exception("""The root element of the JSON has to be a list. Got %s."""
+                            % type(data))
+        adis_files = []
+        for file_dict in data:
+            if type(file_dict) is not dict:
+                raise Exception("Expecting a dict but got %s." % type(raw_file))
+            adis_files.append(AdisFile.from_dict(file_dict))
+
+        return Adis(adis_files)
 
     def from_json_file(path_to_json_file):
         with open(path_to_json_file) as input_file:

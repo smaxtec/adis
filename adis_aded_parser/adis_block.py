@@ -1,15 +1,17 @@
+from .adis_field_definition import AdisFieldDefinition
 from .adis_lines import (
     AdisLine,
     DefinitionLine,
     ValueLine
 )
+from .adis_value import AdisValue
 
 """
 An AdisBlock consists of one definition and (one or) multiple values.
 """
 
 class AdisBlock:
-    def __init__(self, status, entity_number, field_definitions, data_rows):
+    def __init__(self, entity_number, status, field_definitions, data_rows):
         if len(status) != 1:
             raise Exception("Status may only be one char.")
         if status not in AdisLine.status_chars:
@@ -51,7 +53,39 @@ class AdisBlock:
         if entity_number is None or field_definitions is None:
             raise Exception("Definition is missing.")
 
-        return AdisBlock(status, entity_number, field_definitions, data_rows)
+        return AdisBlock(entity_number, status, field_definitions, data_rows)
+
+    @staticmethod
+    def from_dict(entity_number, block_dict):
+        status = block_dict["status"]
+        field_definitions = []
+        for definition_dict in block_dict["definitions"]:
+            if type(definition_dict) is not dict:
+                raise Exception("A field definition has to be a dict but got %s."
+                                % type(definition_dict))
+            definition = AdisFieldDefinition.from_dict(definition_dict)
+            field_definitions.append(definition)
+
+        if type(block_dict["data"]) is not list:
+            raise Exception("The data of each block has to be a list. Got %s."
+                            % type(block_dict["data"]))
+        
+        data_rows = []
+        for data_row_dict in block_dict["data"]:
+            if type(data_row_dict) is not dict:
+                raise Exception("Each data row has to be a dict. Got %s."
+                                % type(data_row_dict))
+            data_row = []
+            for definition in field_definitions:
+                item_number = definition.get_item_number()
+                if item_number in data_row_dict:
+                    value = data_row_dict[item_number]
+                    adis_value = AdisValue(item_number, value)
+                    data_row.append(adis_value)
+
+            data_rows.append(data_row)
+
+        return AdisBlock(entity_number, status, field_definitions, data_rows)
 
     def to_dict(self):
         result_dict = {

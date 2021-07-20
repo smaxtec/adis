@@ -19,6 +19,15 @@ class AdisFile:
 
         return AdisFile(blocks)
 
+    @staticmethod
+    def from_dict(file_dict):
+        blocks = []
+        for entity_number in file_dict:
+            block_dict = file_dict[entity_number]
+            adis_block = AdisBlock.from_dict(entity_number, block_dict)
+            blocks.append(adis_block)
+        return AdisFile(blocks)
+
     # Each block starts with a definition
     @staticmethod
     def split_lines_into_blocks(lines):

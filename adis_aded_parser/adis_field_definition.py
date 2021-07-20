@@ -116,6 +116,13 @@ class AdisFieldDefinition:
         result_str = missing_chars_number * "0" + result_str
         return result_str
 
+    @staticmethod
+    def from_dict(definition_dict):
+        item_number = definition_dict["item_number"]
+        field_size = definition_dict["field_size"]
+        decimal_digits = definition_dict["decimal_digits"]
+        return AdisFieldDefinition(item_number, field_size, decimal_digits)
+
     def __repr__(self):
         return "AdisFieldDefinition: item_number=%s, field_size=%d, decimal_digits=%d" \
             % (self.item_number, self.field_size, self.decimal_digits)
