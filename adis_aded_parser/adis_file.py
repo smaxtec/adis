@@ -45,5 +45,12 @@ class AdisFile:
             data[block.get_entity_number()] = block.to_dict()
         return data
 
+    def dumps(self):
+        text = ""
+        for block in self.blocks:
+            text += block.dumps()
+
+        return text
+
     def __repr__(self):
         return "AdisFile contains %d blocks" % len(self.blocks)

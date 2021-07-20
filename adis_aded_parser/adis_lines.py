@@ -1,21 +1,21 @@
 from .adis_field_definition import AdisFieldDefinition
 
 class AdisLine:
+    status_chars = {
+        "H": "header",
+        "N": "normal",
+        "S": "synchronisation",
+        "F": "faulty",
+        "D": "deletion"
+    }
+
     # takes the line without the first char
     def __init__(self, line):
         self.line = line
         self.line_type_char = line[0]
-        self.status_symbol = line[1]
+        self.status_char = line[1]
 
-        status_symbols = {
-            "H": "header",
-            "N": "normal",
-            "S": "synchronisation",
-            "F": "faulty",
-            "D": "deletion"
-        }
-
-        self.status = status_symbols[self.status_symbol]
+        self.status = AdisLine.status_chars[self.status_char]
 
         if not self.status_allowed(self.status):
             raise Exception(
@@ -26,6 +26,9 @@ class AdisLine:
 
     def get_type_char(self):
         return self.line_type_char
+
+    def get_status_char(self):
+        return self.status_char
 
     def __repr__(self):
         return "%s status: %s, line: %s" % (self.line_type, self.status, self.line)
@@ -102,7 +105,6 @@ class ValueLine(AdisLine):
         return self.entity_number
 
     def parse(self, field_definitions):
-        # TODO: refactor
         expected_raw_items_length = 0
         for field_definition in field_definitions:
             expected_raw_items_length += field_definition.get_field_size()

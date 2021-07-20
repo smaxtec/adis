@@ -1,18 +1,24 @@
 from .adis_lines import (
+    AdisLine,
     DefinitionLine,
     ValueLine
 )
-
-import pprint
-
-pp = pprint.PrettyPrinter(indent=2)
 
 """
 An AdisBlock consists of one definition and (one or) multiple values.
 """
 
 class AdisBlock:
-    def __init__(self, entity_number, field_definitions, data_rows):
+    def __init__(self, status, entity_number, field_definitions, data_rows):
+        if len(status) != 1:
+            raise Exception("Status may only be one char.")
+        if status not in AdisLine.status_chars:
+            raise Exception("Invalid status char. Has to be one of %s."
+                % AdisLine.status_chars)
+        if type(entity_number) is not str or len(entity_number) != 6:
+            raise Exception("""The entity number has to be a string consisting of 6 chars.
+                Got \"%s\".""" % entity_number)
+        self.status = status
         self.entity_number = entity_number
         self.field_definitions = field_definitions
         self.data_rows = data_rows
@@ -28,11 +34,13 @@ class AdisBlock:
 
     @staticmethod
     def from_lines(lines):
+        status = None
         entity_number = None
         field_definitions = None
         data_rows = []
         for line in lines:
             if type(line) == DefinitionLine:
+                status = line.get_status_char()
                 entity_number = line.get_entity_number()
                 field_definitions = line.get_field_definitions()
             if type(line) == ValueLine:
@@ -43,12 +51,13 @@ class AdisBlock:
         if entity_number is None or field_definitions is None:
             raise Exception("Definition is missing.")
 
-        return AdisBlock(entity_number, field_definitions, data_rows)
+        return AdisBlock(status, entity_number, field_definitions, data_rows)
 
     def to_dict(self):
         result_dict = {
             "definitions": [],
-            "data": []
+            "data": [],
+            "status": self.status
         }
         for definition in self.field_definitions:
             result_dict["definitions"].append(definition.to_dict())
@@ -62,5 +71,30 @@ class AdisBlock:
 
         return result_dict
 
+    def dumps_definitions(self):
+        text = "D" + self.status + self.entity_number
+        for definition in self.field_definitions:
+            text += definition.dumps()
+        text += "\r\n"
+        return text
+
+    def dumps_data(self):
+        text = ""
+        for data_row in self.data_rows:
+            text += "V" + self.status + self.entity_number
+            for data_index in range(len(data_row)):
+                definition = self.field_definitions[data_index]
+                data = data_row[data_index]
+                # dumps value using definition
+                text += definition.dumps_value(data.value)
+            text += "\r\n"
+        return text
+
+    def dumps(self):
+        text = self.dumps_definitions()
+        text += self.dumps_data()
+        return text
+
     def __repr__(self):
-        return "AdisBlock containing %d data row(s)" % len(self.data_rows)
+        return "AdisBlock with status=%s and entity_number=%s containing %d data row(s)" \
+                % (self.status, self.entity_number, len(self.data_rows))
