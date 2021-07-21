@@ -1,5 +1,8 @@
 from .adis_value import AdisValue
 
+"""
+The AdisFieldDefinition holds information about the size and the decimal places of the data fields.
+"""
 class AdisFieldDefinition:
     def __init__(self, item_number, field_size, decimal_digits):
         if type(item_number) is not str or len(item_number) != 8:

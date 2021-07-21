@@ -7,7 +7,8 @@ from .adis_lines import (
 from .adis_value import AdisValue
 
 """
-An AdisBlock consists of one definition and (one or) multiple values.
+An AdisBlock consists of one definition and (one or) multiple data rows.
+Each data row has multiple fields.
 """
 
 class AdisBlock:
@@ -125,6 +126,7 @@ class AdisBlock:
     def dumps_data(self):
         text = ""
         for data_row in self.data_rows:
+            # create a value line
             text += "V" + self.status + self.entity_number
             data_row_dict = self.data_row_to_dict(data_row)
             for definition in self.field_definitions:

@@ -1,6 +1,10 @@
 from .adis_block import AdisBlock
 from .adis_lines import DefinitionLine
 
+"""
+An AdisFile contains multiple AdisBlocks.
+"""
+
 class AdisFile:
     def __init__(self, blocks):
         self.blocks = blocks
