@@ -32,6 +32,14 @@ class Adis:
         """
         self.files = adis_files
 
+    def get_files(self):
+        """Returns a list containing the logical AdisFiles
+
+        Returns:
+            list[AdisFile]: list containing the logical AdisFiles
+        """
+        return self.files
+
     @staticmethod
     def parse(text):
         """This method parses the provided ADIS text into an Adis object.

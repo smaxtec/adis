@@ -44,6 +44,14 @@ class AdisFieldDefinition:
         """
         return self.field_size
 
+    def get_decimal_digits(self):
+        """Returns the number of decimal digits.
+
+        Returns:
+            int: number of decimal digits
+        """
+        return self.decimal_digits
+
     def parse_field_at_position(self, raw_text, position):
         """Parses 
 
