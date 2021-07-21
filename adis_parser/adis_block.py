@@ -13,6 +13,15 @@ Each data row has multiple fields.
 
 class AdisBlock:
     def __init__(self, entity_number, status, field_definitions, data_rows):
+        """Creates an AdisBlock object.
+
+        Args:
+            entity_number (string): Entity number of this Block (has to be a string with 6 chars)
+            status (string): Status char of this block, can be H, N, S, F or D
+            field_definintions (list[AdisFieldDefinition]): Field definitions
+            data_rows (list[list[AdisValue]]): list of data rows, each data row is a list \
+                containing AdisValue
+        """
         if len(status) != 1:
             raise Exception("Status may only be one char.")
         if status not in AdisLine.status_chars:
@@ -27,16 +36,39 @@ class AdisBlock:
         self.data_rows = data_rows
 
     def get_entity_number(self):
+        """Returns the entity number of this block.
+
+        Returns:
+            string: Entity number of this block (is a string of 6 chars)
+        """
         return self.entity_number
 
     def get_field_definitions(self):
+        """Returns the field definitions of this block.
+
+        Returns:
+            list[AdisFieldDefinition]: list containing field definitions
+        """
         return self.field_definitions
     
     def get_data_rows(self):
+        """Returns the data rows of this block.
+
+        Returns:
+            list[list[AdisValue]]: list of data rows. Each row is a list of AdisValues
+        """
         return self.data_rows
 
     @staticmethod
     def from_lines(lines):
+        """Creates an AdisBlock from a list of AdisLines
+
+        Args:
+            lines (list[AdisLine]): list of AdisLines
+        
+        Returns:
+            AdisBlock: new AdisBlock
+        """
         status = None
         entity_number = None
         field_definitions = None
@@ -58,6 +90,15 @@ class AdisBlock:
 
     @staticmethod
     def from_dict(entity_number, block_dict):
+        """Creates an AdisBlock form a dict.
+
+        Args:
+            entity_number (string): Entity number of the block
+            block_dict (dict): containing the data rows, the field definitions and the status
+
+        Returns:
+            AdisBlock: new AdisBlock
+        """
         if "status" not in block_dict:
             raise Exception("\"status\" field is missing in block dict.")
         if "definitions" not in block_dict:
@@ -96,6 +137,11 @@ class AdisBlock:
         return AdisBlock(entity_number, status, field_definitions, data_rows)
 
     def to_dict(self):
+        """Creates a dict cointaining all data of this block
+
+        Returns:
+            dict: contains the field definitions, the data rows and the status of the block
+        """
         result_dict = {
             "definitions": [],
             "data": [],
@@ -110,6 +156,15 @@ class AdisBlock:
         return result_dict
 
     def data_row_to_dict(self, data_row):
+        """Turns a data row to a dict.
+
+        Args:
+            data_row (list[AdisValue]): list containing the values of the data row
+
+        Returns:
+            dict: dict where the key is the item number and the value is the actual value of the \
+                field
+        """
         data_row_dict = {}
         for value in data_row:
             value_as_dict = value.to_dict()
@@ -117,6 +172,11 @@ class AdisBlock:
         return data_row_dict
 
     def dumps_definitions(self):
+        """Creats a ADIS definition line string from the field definitions.
+
+        Returns:
+            string: ADIS definition line string
+        """
         text = "D" + self.status + self.entity_number
         for definition in self.field_definitions:
             text += definition.dumps()
@@ -124,6 +184,11 @@ class AdisBlock:
         return text
 
     def dumps_data(self):
+        """Turns the data rows into value lines.
+
+        Returns:
+            string: value lines
+        """
         text = ""
         for data_row in self.data_rows:
             # create a value line
@@ -142,6 +207,11 @@ class AdisBlock:
         return text
 
     def dumps(self):
+        """Creates an ADIS text form this block.
+
+        Returns:
+            string: ADIS text of this block
+        """
         text = self.dumps_definitions()
         text += self.dumps_data()
         return text
