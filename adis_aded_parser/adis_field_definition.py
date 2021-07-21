@@ -82,24 +82,20 @@ class AdisFieldDefinition:
         else:
             text = str(value)
             if self.decimal_digits != 0 or type(value) is float:
-                number_of_decimal_places = text.find(".") + 1
+                decimal_dot_position = text.find(".") + 1
+                decimal_dot_position_from_behind = len(text) - decimal_dot_position
+                text = text.replace(".", "")
+                
+                expected_decimal_dot_position_from_behind = self.decimal_digits
 
-                comma_shifts = self.decimal_digits - number_of_decimal_places
-
-                # 1.234
-                # expect 2 decimal places
-                # 2 - 3 = -1
-                # Remove one char
-
-                # 1.234
-                # expect 4 decimal places
-                # 4 - 3 = 1
-                # Add one char
-
-                if comma_shifts < 0:
-                    text = text[:comma_shifts]
-                else:
-                    text += "0" * comma_shifts
+                if expected_decimal_dot_position_from_behind > decimal_dot_position_from_behind:
+                    decimal_places_to_add = expected_decimal_dot_position_from_behind \
+                                                - decimal_dot_position_from_behind
+                    text += decimal_places_to_add * "0"
+                elif expected_decimal_dot_position_from_behind < decimal_dot_position_from_behind:
+                    decimal_places_to_remove = decimal_dot_position_from_behind \
+                                                - expected_decimal_dot_position_from_behind
+                    text = text[:len(text) - decimal_places_to_remove]
 
             text_length = len(text)
             if self.field_size < text_length:
