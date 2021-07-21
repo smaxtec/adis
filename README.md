@@ -150,13 +150,14 @@ ZN
 ```
 
 ## About the ADIS format
-Each physical file can contain multiple logical ADIS files.
-Each of those logical ADIS files contains one or multiple blocks.
-Each block consists of the definitions for the fields and one or multiple
-data rows.
+Each physical file can contain multiple logical ADIS files, these are represented by objects of the type `AdisFile`.
+Each of those logical ADIS files contains one or multiple blocks, these are represented by objects of the type `AdisBlock`.
+Each block consists of the definitions for the fields (list of objects of type `AdisFieldDefinition`) and one or multiple
+data rows (list of list of `AdisValue`).
 
 ## Documentation
-This documentation only contains methods that are inteded to be used by the user. Take a look at the docstrings for more information about methods.
+This documentation only contains methods that are inteded to be used by the user.
+Take a look at the docstrings for more information about methods.
 
 ### Adis
 Static methods:
