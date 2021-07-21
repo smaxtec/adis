@@ -57,6 +57,13 @@ class AdisBlock:
 
     @staticmethod
     def from_dict(entity_number, block_dict):
+        if "status" not in block_dict:
+            raise Exception("\"status\" field is missing in block dict.")
+        if "definitions" not in block_dict:
+            raise Exception("\"definitions\" field is missing in block dict.")
+        if "data" not in block_dict:
+            raise Exception("\"data\" field is missing in block dict.")
+
         status = block_dict["status"]
         field_definitions = []
         for definition_dict in block_dict["definitions"]:
