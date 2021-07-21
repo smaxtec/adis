@@ -1,13 +1,15 @@
 # ADIS-Parser
-A Parser for Agricultural Data Interchange Syntax
+A Parser for Agricultural Data Interchange Syntax.
 
-This parser supports Class A ADIS format.
+This parser supports **Class A** ADIS format.
 
 
 ## Installation
+```
 
+```
 
-## Quickstart
+## Examples
 ### Parse an ADIS file and turn it to JSON
 ```python
 # example_adis_to_json.py
@@ -148,7 +150,47 @@ ZN
 ```
 
 ## About the ADIS format
-Each file can contain multiple logical ADIS files.
-Each of these logical ADIS files consists of one or multiple blocks.
-Each block contains the definitions for the fields and one or multiple
+Each physical file can contain multiple logical ADIS files.
+Each of those logical ADIS files contains one or multiple blocks.
+Each block consists of the definitions for the fields and one or multiple
 data rows.
+
+## Documentation
+This documentation only contains methods that are inteded to be used by the user. Take a look at the docstrings for more information about methods.
+
+### Adis
+Static methods:
+* `parse(text)`: Creates an `Adis` object from a text that's in the ADIS format
+* `parse_from_file(path_to_file)`: Creates an `Adis` object from an ADIS file
+* `from_json(json_text)`: Create an `Adis` object from a json text
+* `from_json_file(path_to_json_file)`: Create an `Adis` object from a json file
+
+Normal methods:
+* `__init__(blocks)`: Creates an `Adis` object from a list of `AdisFile`s
+* `to_json()`: Creates a json text containing the files, definitions and data
+* `dumps()`: Creates a text in the ADIS format
+* `get_files()`: Returns a list of `AdisFile`s
+
+### AdisFile
+Normal methods:
+* `__init__(blocks)`: Creates an `AdisFile` from a list of `AdisBlock`s
+* `get_blocks()`: Returns a list of `AdisBlock`s
+
+### AdisBlock
+Normal methods:
+* `__init__(entity_number, status, field_definitions, data_rows)`: Creates an `AdisBlock`
+* `get_entity_number()`: Returns the entity number of this `AdisBlock`
+* `get_field_definitions()`: Returns the field definitions as list of `AdisFieldDefinition`s
+* `get_data_rows()`: Returns the data rows as list. Each data row is a list of `AdisValue`s
+
+### AdisFieldDefinition
+Normal methods:
+* `__init__(item_number, field_size, decimal_digits)`: Creates an `AdisFieldDefinition`
+* `get_item_number()`: Returns the item number
+* `get_field_size()`: Returns the field size
+* `get_decimal_digits()`: Returns the number of decimal digits
+
+### AdisValue
+Normal methods:
+* `__init__(item_number, value)`: Creates an `AdisValue`
+* `to_dict()`: Returns a dict containing the item number and value of this `AdisValue`
