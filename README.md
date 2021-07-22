@@ -3,6 +3,9 @@ A Parser for Agricultural Data Interchange Syntax.
 
 This parser supports **Class A** ADIS format.
 
+[ADIS Standardization document](https://www.iso.org/obp/ui/#iso:std:iso:11787:ed-1:v1:en)
+
+[Wikipedia artice (unfortunately only available in german)](https://de.wikipedia.org/wiki/Agricultural_Data_Interchange_Syntax)
 
 ## Installation
 ```
