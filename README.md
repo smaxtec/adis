@@ -6,7 +6,7 @@ This parser supports **Class A** ADIS format.
 
 ## Installation
 ```
-pip install adis_parser
+pip install adis-parser
 ```
 
 ## Examples
