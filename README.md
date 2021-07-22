@@ -13,11 +13,9 @@ pip install adis_parser
 ### Parse an ADIS file and turn it to JSON
 ```python
 # example_adis_to_json.py
-from adis_aded_parser import Adis
+from adis_parser import Adis
 
-sample_adis_file = "sample.ads"
-
-adis = Adis.parse_from_file(sample_adis_file)
+adis = Adis.parse_from_file("sample.ads")
 generated_json = adis.to_json()
 
 print(generated_json)
@@ -122,15 +120,12 @@ Prettyprinted output:
 ### Turn a JSON file to ADIS
 ```python
 # example_json_to_adis.py
-from adis_aded_parser import Adis
+from adis_parser import Adis
 
-sample_json_file = "sample.json"
-
-adis = Adis.from_json_file(sample_json_file)
+adis = Adis.from_json_file("sample.json")
 generated_adis_text = adis.dumps()
 
 print(generated_adis_text)
-
 ```
 Output:
 ```
