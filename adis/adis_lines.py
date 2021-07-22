@@ -198,8 +198,8 @@ class ValueLine(AdisLine):
             expected_raw_items_length_when_last_item_empty = \
                 expected_raw_items_length - field_definitions[-1].get_field_size()
             if len(self.raw_items) < expected_raw_items_length_when_last_item_empty:
-                raise Exception("""Expecting an item text length of %d chars or %d chars,
-                    but got %d chars."""
+                raise Exception("Expecting an item text length of %d chars or %d chars, " \
+                    "but got %d chars."
                     % (expected_raw_items_length, 
                         expected_raw_items_length_when_last_item_empty,
                         len(self.raw_items)))

@@ -120,7 +120,7 @@ class Adis:
         adis_files = []
         for file_dict in data:
             if type(file_dict) is not dict:
-                raise Exception("Expecting a dict but got %s." % type(raw_file))
+                raise Exception("Expecting a dict but got %s." % type(file_dict))
             adis_files.append(AdisFile.from_dict(file_dict))
 
         return Adis(adis_files)

@@ -25,8 +25,8 @@ class AdisFieldDefinition:
         
         self.decimal_digits = int(decimal_digits)
         if self.decimal_digits < 0 or 9 < self.decimal_digits:
-            raise Exception("""The number of decimal digits has to be a number between 0 and 9.
-                Got %d.""" % self.decimal_digits)
+            raise Exception("The number of decimal digits has to be a number between 0 and 9. " \
+                "Got %d." % self.decimal_digits)
 
     def get_item_number(self):
         """Returns the item number.
@@ -69,8 +69,8 @@ class AdisFieldDefinition:
 
         value_size = len(value)
         if value_size != 0 and value_size != self.field_size:
-            raise Exception("""Expected field size of %d chars or an empty field, but got
-                field size of %d chars.""" % (self.field_size, value_size))
+            raise Exception("Expected field size of %d chars or an empty field, but got " \
+                "field size of %d chars." % (self.field_size, value_size))
         elif value_size == 0:
             value = None
 
