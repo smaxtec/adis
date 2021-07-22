@@ -1,4 +1,4 @@
-from adis_parser import Adis
+from adis import Adis
 
 adis = Adis.from_json_file("sample.json")
 generated_adis_text = adis.dumps()

@@ -1,4 +1,4 @@
-from adis_parser import Adis
+from adis import Adis
 import os
 import json
 

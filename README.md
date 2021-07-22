@@ -1,5 +1,5 @@
-# ADIS-Parser
-A Parser for Agricultural Data Interchange Syntax.
+# ADIS
+A python package for parsing and creating ADIS (Agricultural Data Interchange Syntax) files. 
 
 This parser supports **Class A** ADIS format.
 
@@ -9,14 +9,14 @@ This parser supports **Class A** ADIS format.
 
 ## Installation
 ```
-pip install adis-parser
+pip install adis
 ```
 
 ## Examples
 ### Parse an ADIS file and turn it to JSON
 ```python
 # example_adis_to_json.py
-from adis_parser import Adis
+from adis import Adis
 
 adis = Adis.parse_from_file("sample.ads")
 generated_json = adis.to_json()
@@ -123,7 +123,7 @@ Prettyprinted output:
 ### Turn a JSON file to ADIS
 ```python
 # example_json_to_adis.py
-from adis_parser import Adis
+from adis import Adis
 
 adis = Adis.from_json_file("sample.json")
 generated_adis_text = adis.dumps()
