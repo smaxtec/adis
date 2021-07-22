@@ -213,4 +213,4 @@ def test_adis_field_definition():
                 "field size of 4 chars."):
         adis_field_definition.parse_field_at_position("1234", 0)
     
-    assert adis_field_definition.parse_field_at_position("123", 3).value == None
+    assert adis_field_definition.parse_field_at_position("123", 3).value is None
