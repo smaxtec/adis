@@ -1,0 +1,92 @@
+[
+    {
+        "990001": {
+            "status": "H",
+            "definitions": [
+                {
+                    "item_number": "00000000",
+                    "field_size": 20,
+                    "decimal_digits": 0
+                },
+                {
+                    "item_number": "00000001",
+                    "field_size": 9,
+                    "decimal_digits": 6
+                },
+                {
+                    "item_number": "00000002",
+                    "field_size": 10,
+                    "decimal_digits": 0
+                }
+            ],
+            "data": [
+                {
+                    "00000000": "Euler number",
+                    "00000001": 2.71828182,
+                    "00000002": null
+                },
+                {
+                    "00000000": "Pi",
+                    "00000001": 3.14159265,
+                    "00000002": null
+                },
+                {
+                    "00000000": "Gravity on Earth",
+                    "00000001": 9.81,
+                    "00000002": "ms^(-2)" 
+                }
+            ]
+        },
+        "990002": {
+            "status": "N",
+            "definitions": [
+                {
+                    "item_number": "00000008",
+                    "field_size": 10,
+                    "decimal_digits": 0
+                },
+                {
+                    "item_number": "00000009",
+                    "field_size": 10,
+                    "decimal_digits": 0
+                }
+            ],
+            "data": [
+                {
+                    "00000009": "xyz",
+                    "00000008": "abc"
+                },
+                {
+                    "00000008": "def",
+                    "00000009": "uvw"
+                }
+            ]
+        }
+    },
+    {
+        "990001": {
+            "status": "H",
+            "definitions": [
+                {
+                    "item_number": "00000006",
+                    "field_size": 10,
+                    "decimal_digits": 0
+                },
+                {
+                    "item_number": "00000007",
+                    "field_size": 5,
+                    "decimal_digits": 2
+                }
+            ],
+            "data": [
+                {
+                    "00000006": 1,
+                    "00000007": 1.23
+                },
+                {
+                    "00000006": 2
+                }
+            ]
+        }
+    }
+]
