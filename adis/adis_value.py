@@ -17,7 +17,7 @@ class AdisValue:
         """
         return {
             "item_number": self.item_number,
-            "value": self.value
+            "value": self.value.strip() if isinstance(self.value, str) else self.value
         }
 
     def __repr__(self):
