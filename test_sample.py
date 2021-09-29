@@ -25,7 +25,7 @@ with open(demo_json_file, "r") as input_file:
     json_input_data = json.loads(input_file.read())
 
 adis = Adis.from_json_file(demo_json_file)
-generated_json = adis.to_json()
+generated_json = adis.to_json(strip_string_values=False)
 json_output_data = json.loads(generated_json)
 
 adis_out = adis.dumps()
