@@ -5,6 +5,7 @@ from .adis_lines import (
     EndOfLogicalFileLine,
     PhysicalEndOfFileLine
 )
+from .adis_value import AdisValue
 
 def split_lines(raw_input_text):
     """Splits the provided text into lines. Lines are splitted at "\n" and "\r" chars get \
@@ -82,25 +83,35 @@ class Adis:
             text = input_file.read()
         return Adis.parse(text)
 
-    def get_list(self):
+    def get_list(self, strip_string_values=True):
         """Returns a list containing of the logical ADIS files and their contents. \
             The returned list only contains builtin types.
+
+        Args:
+            strip_string_values (bool, optional, by default True): Whether string \
+                values should be stripped or not.
 
         Returns:
             list: containing the logical adis files and their contents as builtin types.
         """
+
+        AdisValue.strip_string_values = strip_string_values
         list_of_files = []
         for adis_file in self.files:
             list_of_files.append(adis_file.to_dict())
         return list_of_files
 
-    def to_json(self):
+    def to_json(self, strip_string_values=True):
         """Creates a json from the Adis object.
+
+        Args:
+            strip_string_values (bool, optional, by default True): Whether string \
+                values should be stripped or not.
 
         Returns:
             string: Adis as json
         """
-        return json.dumps(self.get_list())
+        return json.dumps(self.get_list(strip_string_values))
 
     @staticmethod
     def from_json(json_text):
