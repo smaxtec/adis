@@ -174,7 +174,7 @@ class Adis:
         Args:
             obj (list): containing the logical adis files and their contents as builtin types without string values
             entity_data_dict (dict): dictionary of mapping values for \
-             entity numbers (e.g. {"0080004": "Betriebsnummer"})
+             item numbers (e.g. {"0080004": "Betriebsnummer"})
 
         Returns:
              list: containing the logical adis files and their contents as builtin types with string values
@@ -183,5 +183,5 @@ class Adis:
         for defs in obj[0]:
             for items in obj[0].get(defs).get("definitions"):
                 x = entity_data_dict.get(items['item_number'][2:], items['item_number'][2:])
-                items['string_value'] = x
+                items['item_name'] = x
         return obj

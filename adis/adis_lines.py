@@ -71,7 +71,8 @@ class AdisLine:
             "V": ValueLine,
             "E": EndOfLogicalFileLine,
             "C": CommentLine,
-            "Z": PhysicalEndOfFileLine
+            "Z": PhysicalEndOfFileLine,
+            "T": PhysicalEndOfFileLine
         }
 
         line_type = line[0]
