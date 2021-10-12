@@ -85,31 +85,39 @@ def test_adis_block_getters():
 def test_adis_block_exceptions():
     with pytest.raises(Exception,
         match="The entity number has to be a string consisting of 6 chars."):
-        AdisBlock("123", "N", [], [])
+        AdisBlock("123", "N", "definitions", [], [])
 
     with pytest.raises(Exception,
         match="Invalid status char. Has to be one of "):
-        AdisBlock("123456", "A", [], [])
+        AdisBlock("123456", "A", "definitions", [], [])
 
     with pytest.raises(Exception,
         match="Status may only be one char."):
-        AdisBlock("123456", "NN", [], [])
+        AdisBlock("123456", "NN", "definitions", [], [])
+
     
     with pytest.raises(Exception,
-        match="\"status\" field is missing in block dict."):
+        match="entity type is missing, wrong or too many are in block dict. must be one of"):
         AdisBlock.from_dict("123456", {})
     
     with pytest.raises(Exception,
-        match="\"definitions\" field is missing in block dict."):
+        match="entity type is missing, wrong or too many are in block dict. must be one of"):
         AdisBlock.from_dict("123456", {
-            "status": "N"
+            "definitions": [],
+            "request": []
         })
 
     with pytest.raises(Exception,
-        match="\"data\" field is missing in block dict."):
+        match="\"data\" field is missing in \"definitions\" block dict."):
         AdisBlock.from_dict("123456", {
-            "status": "N",
             "definitions": []
+        })
+
+    with pytest.raises(Exception,
+        match="\"status\" field is missing in block dict."):
+        AdisBlock.from_dict("123456", {
+            "definitions": [],
+            "data": []
         })
 
     with pytest.raises(Exception,
@@ -214,3 +222,47 @@ def test_adis_field_definition():
         adis_field_definition.parse_field_at_position("1234", 0)
     
     assert adis_field_definition.parse_field_at_position("123", 3).value is None
+
+
+def test_request_parse_line():
+    adis_line = AdisLine.parse_line("RN990001000000002000000000109600000002100")
+
+    assert "990001" == adis_line.get_entity_number()
+    field_definitions = adis_line.get_field_definitions()
+    assert field_definitions[0].item_number == "00000000"
+    assert field_definitions[0].field_size == 20
+    assert field_definitions[0].decimal_digits == 0
+
+
+adis_request = "RN9900010000000020000000001096\r\nZN\r\n"
+
+
+json_request = json.dumps([
+    {
+        "990001": {
+            "request": [
+                {
+                    "item_number": "00000000",
+                    "field_size": 20,
+                    "decimal_digits": 0
+                },
+                {
+                    "item_number": "00000001",
+                    "field_size": 9,
+                    "decimal_digits": 6
+                }
+            ],
+            "status": "N"
+        }
+    }
+])
+
+
+def test_request_parse():
+    ads = Adis.parse(adis_request)
+    assert ads.to_json() == json_request
+
+
+def test_request_from_json():
+    adis = Adis.from_json(json_request)
+    assert adis.dumps() == adis_request

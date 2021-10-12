@@ -1,5 +1,5 @@
 from .adis_block import AdisBlock
-from .adis_lines import DefinitionLine
+from .adis_lines import DefinitionLine, RequestLine
 
 """
 An AdisFile contains multiple AdisBlocks.
@@ -73,7 +73,7 @@ class AdisFile:
         current_block = []
 
         for line in lines:
-            if type(line) == DefinitionLine:
+            if type(line) in (DefinitionLine, RequestLine):
                 # start of a new block
                 if len(current_block) != 0:
                     blocks.append(current_block)

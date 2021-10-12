@@ -9,6 +9,20 @@ class AdisLine:
         "D": "deletion"
     }
 
+    type_chars = {
+        "definitions": "D",
+        "value": "V",
+        "end_of_logical_file": "E",
+        "comment": "C",
+        "search": "S",
+        "request": "R",
+        "file": "F",
+        "include": "I",
+        "output": "O",
+        "terminate": "T",
+        "physical_end_of_file": "Z",
+    }
+
     # takes the line without the first char
     def __init__(self, line):
         """Creates an AdisLine.
@@ -45,6 +59,16 @@ class AdisLine:
         """
         return self.line_type_char
 
+    def get_type(self):
+        """Returns the type of this AdisLine.
+
+        Returns:
+            string: type of this AdisLine
+        """
+        for description, char in AdisLine.type_chars.items():
+            if char == self.line_type_char:
+                return description
+
     def get_status_char(self):
         """Returns the status char of this AdisLine.
 
@@ -55,7 +79,7 @@ class AdisLine:
 
     def __repr__(self):
         return "%s status: %s, line: %s" % (self.line_type, self.status, self.line)
-    
+
     @staticmethod
     def parse_line(line):
         """Creates an AdisLine from the given line.
@@ -71,25 +95,14 @@ class AdisLine:
             "V": ValueLine,
             "E": EndOfLogicalFileLine,
             "C": CommentLine,
+            "R": RequestLine,
             "Z": PhysicalEndOfFileLine
         }
 
         line_type = line[0]
         return line_types[line_type](line)
 
-
-class DefinitionLine(AdisLine):
-    def __init__(self, line):
-        """Creates a DefinitionLine
-
-        Args:
-            line (string): line from ADIS file
-        """
-        self.line_type = "Definition"
-        self.allowed_statuses = [
-            "header", "normal", "synchronisation", "faulty", "deletion"
-        ]
-        super().__init__(line)
+    def get_fields(self):
 
         self.entity_number = self.line[2:8]
 
@@ -154,6 +167,21 @@ class DefinitionLine(AdisLine):
         decimal_digits = field_definition_block[10]
         return AdisFieldDefinition(item_number, field_size, decimal_digits)
 
+
+class DefinitionLine(AdisLine):
+    def __init__(self, line):
+        """Creates a DefinitionLine
+
+        Args:
+            line (string): line from ADIS file
+        """
+        self.line_type = "Definition"
+        self.allowed_statuses = [
+            "header", "normal", "synchronisation", "faulty", "deletion"
+        ]
+        super().__init__(line)
+
+        self.get_fields()
 
 class ValueLine(AdisLine):
     def __init__(self, line):
@@ -250,6 +278,20 @@ class CommentLine(AdisLine):
             string: comment
         """
         return self.comment
+
+
+class RequestLine(AdisLine):
+    def __init__(self, line):
+        """Creates a RequestLine.
+
+        Args:
+            line (string): raw line from an ADIS file
+        """
+        self.line_type = "Request"
+        self.allowed_statuses = ["normal", "faulty"]
+        super().__init__(line)
+
+        self.get_fields()
 
 
 class PhysicalEndOfFileLine(AdisLine):

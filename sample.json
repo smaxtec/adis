@@ -87,6 +87,21 @@
                     "00000006": 2
                 }
             ]
+        },
+        "990004": {
+            "status": "N",
+            "request": [
+                {
+                    "item_number": "00900028",
+                    "field_size": 12,
+                    "decimal_digits": 0
+                },
+                {
+                    "item_number": "00900009",
+                    "field_size": 13,
+                    "decimal_digits": 0
+                }
+            ]
         }
     }
 ]

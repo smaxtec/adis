@@ -2,6 +2,7 @@ from .adis_field_definition import AdisFieldDefinition
 from .adis_lines import (
     AdisLine,
     DefinitionLine,
+    RequestLine,
     ValueLine
 )
 from .adis_value import AdisValue
@@ -12,7 +13,7 @@ Each data row has multiple fields.
 """
 
 class AdisBlock:
-    def __init__(self, entity_number, status, field_definitions, data_rows):
+    def __init__(self, entity_number, status, entity_type, field_definitions, data_rows):
         """Creates an AdisBlock object.
 
         Args:
@@ -31,6 +32,8 @@ class AdisBlock:
             raise Exception("""The entity number has to be a string consisting of 6 chars.
                 Got \"%s\".""" % entity_number)
         self.status = status
+        self.type = entity_type
+        self.type_char = AdisLine.type_chars[entity_type]
         self.entity_number = entity_number
         self.field_definitions = field_definitions
         self.data_rows = data_rows
@@ -70,12 +73,14 @@ class AdisBlock:
             AdisBlock: new AdisBlock
         """
         status = None
+        entity_type = None
         entity_number = None
         field_definitions = None
         data_rows = []
         for line in lines:
-            if type(line) == DefinitionLine:
+            if type(line) in (DefinitionLine, RequestLine):
                 status = line.get_status_char()
+                entity_type = line.get_type()
                 entity_number = line.get_entity_number()
                 field_definitions = line.get_field_definitions()
             if type(line) == ValueLine:
@@ -86,7 +91,7 @@ class AdisBlock:
         if entity_number is None or field_definitions is None:
             raise Exception("Definition is missing.")
 
-        return AdisBlock(entity_number, status, field_definitions, data_rows)
+        return AdisBlock(entity_number, status, entity_type, field_definitions, data_rows)
 
     @staticmethod
     def from_dict(entity_number, block_dict):
@@ -99,28 +104,32 @@ class AdisBlock:
         Returns:
             AdisBlock: new AdisBlock
         """
+        possible_entity_types =AdisLine.type_chars.keys()
+        entity_types = set(possible_entity_types) & set(block_dict.keys())
+        if len(entity_types) != 1:
+            raise Exception("entity type is missing, wrong or too many are in "
+                            f"block dict. must be one of \"{list(possible_entity_types)}\"")
+        entity_type = list(entity_types)[0]
+        if entity_type == "definitions" and "data" not in block_dict:
+            raise Exception("\"data\" field is missing in \"definitions\" block dict.")
         if "status" not in block_dict:
             raise Exception("\"status\" field is missing in block dict.")
-        if "definitions" not in block_dict:
-            raise Exception("\"definitions\" field is missing in block dict.")
-        if "data" not in block_dict:
-            raise Exception("\"data\" field is missing in block dict.")
 
         status = block_dict["status"]
         field_definitions = []
-        for definition_dict in block_dict["definitions"]:
+        for definition_dict in block_dict[entity_type]:
             if type(definition_dict) is not dict:
                 raise Exception("A field definition has to be a dict but got %s."
                                 % type(definition_dict))
             definition = AdisFieldDefinition.from_dict(definition_dict)
             field_definitions.append(definition)
 
-        if type(block_dict["data"]) is not list:
+        if type(block_dict.get("data", [])) is not list:
             raise Exception("The data of each block has to be a list. Got %s."
                             % type(block_dict["data"]))
         
         data_rows = []
-        for data_row_dict in block_dict["data"]:
+        for data_row_dict in block_dict.get("data", []):
             if type(data_row_dict) is not dict:
                 raise Exception("Each data row has to be a dict. Got %s."
                                 % type(data_row_dict))
@@ -134,21 +143,23 @@ class AdisBlock:
 
             data_rows.append(data_row)
 
-        return AdisBlock(entity_number, status, field_definitions, data_rows)
+        return AdisBlock(entity_number, status, entity_type, field_definitions, data_rows)
 
     def to_dict(self):
-        """Creates a dict cointaining all data of this block
+        """Creates a dict containing all data of this block
 
         Returns:
             dict: contains the field definitions, the data rows and the status of the block
         """
         result_dict = {
-            "definitions": [],
-            "data": [],
+            self.type: [],
             "status": self.status
         }
+        if self.type == "definitions":
+            result_dict["data"] = []
+
         for definition in self.field_definitions:
-            result_dict["definitions"].append(definition.to_dict())
+            result_dict[self.type].append(definition.to_dict())
 
         for data_row in self.data_rows:
             result_dict["data"].append(self.data_row_to_dict(data_row))
@@ -177,7 +188,7 @@ class AdisBlock:
         Returns:
             string: ADIS definition line string
         """
-        text = "D" + self.status + self.entity_number
+        text = self.type_char + self.status + self.entity_number
         for definition in self.field_definitions:
             text += definition.dumps()
         text += "\r\n"
