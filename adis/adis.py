@@ -180,8 +180,9 @@ class Adis:
              list: containing the logical adis files and their contents as builtin types with string values
 
         """
-        for defs in obj[0]:
-            for items in obj[0].get(defs).get("definitions"):
-                x = entity_data_dict.get(items['item_number'][2:], items['item_number'][2:])
-                items['item_name'] = x
+        for o in obj:
+            for defs in o:
+                for items in obj[0].get(defs).get("definitions"):
+                    x = entity_data_dict.get(items['item_number'][2:], items['item_number'][2:])
+                    items['item_name'] = x
         return obj
