@@ -58,7 +58,7 @@ class Adis:
         for raw_line in raw_lines:
             if raw_line == "":
                 continue
-            
+
             line = AdisLine.parse_line(raw_line)
             if type(line) == EndOfLogicalFileLine or type(line) == PhysicalEndOfFileLine:
                 adis_files.append(AdisFile.from_lines(lines_for_file))
@@ -94,13 +94,21 @@ class Adis:
             list_of_files.append(adis_file.to_dict())
         return list_of_files
 
-    def to_json(self):
+    def to_json(self, mapping_dict: dict = None):
         """Creates a json from the Adis object.
+
+        Args:
+            mapping_dict (dict): Optional dictionary of mapping values \
+             for entity numbers (e.g. {"0080004": "Betriebsnummer"})
 
         Returns:
             string: Adis as json
         """
-        return json.dumps(self.get_list())
+        if mapping_dict is None or type(mapping_dict) != dict:
+            return json.dumps(self.get_list())
+        else:
+            list_of_adis = self.get_list()
+            return json.dumps(self.add_string_value(list_of_adis, mapping_dict))
 
     @staticmethod
     def from_json(json_text):
@@ -158,3 +166,23 @@ class Adis:
 
     def __repr__(self):
         return """Adis containing %d Adis-files""" % len(self.files)
+
+    @staticmethod
+    def add_string_value(obj: list, entity_data_dict: dict):
+        """ Adds string value to definition list
+
+        Args:
+            obj (list): containing the logical adis files and their contents as builtin types without string values
+            entity_data_dict (dict): dictionary of mapping values for \
+             item numbers (e.g. {"0080004": "Betriebsnummer"})
+
+        Returns:
+             list: containing the logical adis files and their contents as builtin types with string values
+
+        """
+        for o in obj:
+            for defs in o:
+                for items in obj[0].get(defs).get("definitions"):
+                    x = entity_data_dict.get(items['item_number'][2:], items['item_number'][2:])
+                    items['item_name'] = x
+        return obj
