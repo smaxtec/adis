@@ -47,19 +47,19 @@ Prettyprinted output:
             ],
             "data": [
                 {
-                    "00000000": "Euler number        ",
+                    "00000000": "Euler number",
                     "00000001": 2.718281,
                     "00000002": null
                 },
                 {
-                    "00000000": "Pi                  ",
+                    "00000000": "Pi",
                     "00000001": 3.141592,
                     "00000002": null
                 },
                 {
-                    "00000000": "Gravity on Earth    ",
+                    "00000000": "Gravity on Earth",
                     "00000001": 9.81,
-                    "00000002": "ms^(-2)   "
+                    "00000002": "ms^(-2)"
                 }
             ],
             "status": "H"
@@ -79,12 +79,12 @@ Prettyprinted output:
             ],
             "data": [
                 {
-                    "00000008": "abc       ",
-                    "00000009": "xyz       "
+                    "00000008": "abc",
+                    "00000009": "xyz"
                 },
                 {
-                    "00000008": "def       ",
-                    "00000009": "uvw       "
+                    "00000008": "def",
+                    "00000009": "uvw"
                 }
             ],
             "status": "N"
@@ -106,11 +106,11 @@ Prettyprinted output:
             ],
             "data": [
                 {
-                    "00000006": "         1",
+                    "00000006": "1",
                     "00000007": 1.23
                 },
                 {
-                    "00000006": "         2"
+                    "00000006": "2"
                 }
             ],
             "status": "H"
@@ -165,8 +165,8 @@ Static methods:
 * `from_json_file(path_to_json_file)`: Create an `Adis` object from a json file
 
 Normal methods:
-* `__init__(blocks)`: Creates an `Adis` object from a list of `AdisFile`s
-* `to_json()`: Creates a json text containing the files, definitions and data
+* `__init__(adis_files)`: Creates an `Adis` object from a list of `AdisFile`s
+* `to_json(strip_string_values=True)`: Creates a json text containing the files, definitions and data
 * `dumps()`: Creates a text in the ADIS format
 * `get_files()`: Returns a list of `AdisFile`s
 
@@ -190,6 +190,10 @@ Normal methods:
 * `get_decimal_digits()`: Returns the number of decimal digits
 
 ### AdisValue
+Static flags:
+* `strip_string_values`: String values that are returned by `to_dict()` will be
+    stripped if this flag is set.
+
 Normal methods:
 * `__init__(item_number, value)`: Creates an `AdisValue`
 * `to_dict()`: Returns a dict containing the item number and value of this `AdisValue`

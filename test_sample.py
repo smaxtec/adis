@@ -25,7 +25,7 @@ with open(demo_json_file, "r") as input_file:
     json_input_data = json.loads(input_file.read())
 
 adis = Adis.from_json_file(demo_json_file)
-generated_json = adis.to_json()
+generated_json = adis.to_json(strip_string_values=False)
 json_output_data = json.loads(generated_json)
 
 adis_out = adis.dumps()
@@ -214,3 +214,34 @@ def test_adis_field_definition():
         adis_field_definition.parse_field_at_position("1234", 0)
     
     assert adis_field_definition.parse_field_at_position("123", 3).value is None
+
+def test_string_value_stripping():
+    unstripped_json = json.loads(adis.to_json(strip_string_values=False))
+    stripped_json = json.loads(adis.to_json())
+
+    assert equals_stripped(stripped_json, unstripped_json) is True
+
+def equals_stripped(stripped, unstripped):
+    if type(stripped) is not type(unstripped):
+        return False
+    
+    if isinstance(stripped, dict):
+        try:
+            for key in stripped:
+                if not equals_stripped(stripped[key], unstripped[key]):
+                    return False
+        except KeyError:
+            return False
+        
+    elif isinstance(stripped, list):
+        if len(stripped) is not len(unstripped):
+            return False
+
+        for index in range(len(stripped)):
+            if not equals_stripped(stripped[index], unstripped[index]):
+                return False
+            
+    elif isinstance(stripped, str):
+        return unstripped.strip() == stripped
+
+    return True
